@@ -2,7 +2,7 @@ package puzzlebase;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
-import flixel.math.FlxRandom;
+import flixel.FlxG.random as FlxRandom;
 
 /**
  * ...
@@ -84,9 +84,9 @@ class PuzzlePiece extends FlxSprite
 		stampSprite.destroy();	
 	}
 	
-	override public function update():Void
+	override public function update(elapsed: Float):Void
 	{
-		super.update();
+		super.update(elapsed);
 		
 		if (FlxG.mouse.justPressed && GrunnUtil.overlapCheck(this))
 		{

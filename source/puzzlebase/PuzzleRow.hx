@@ -5,7 +5,7 @@ import flixel.group.FlxGroup;
 import flixel.tweens.FlxTween;
 import flixel.math.FlxPoint;
 import flixel.group.FlxGroup;
-import flixel.math.FlxRandom;
+import flixel.FlxG.random as FlxRandom;
 
 /**
  * ...
@@ -181,7 +181,18 @@ class PuzzleRow extends FlxGroup
 	{
 		for (i in 0..._array.length)
 		{
-			var tween:FlxTween = FlxTween.cubicMotion(_array[i], _array[i].startingPoint.x, _array[i].startingPoint.y, FlxRandom.float(0, FlxG.width), FlxRandom.float(0, FlxG.height), FlxRandom.float(0, FlxG.width), FlxRandom.float(0, FlxG.height), _array[i].destinationPoint.x, _array[i].destinationPoint.y, .5, { complete: onComplete });
+			var tween:FlxTween = FlxTween.cubicMotion(
+				_array[i], 
+				_array[i].startingPoint.x, 
+				_array[i].startingPoint.y, 
+				FlxRandom.float(0, FlxG.width), 
+				FlxRandom.float(0, FlxG.height), 
+				FlxRandom.float(0, FlxG.width), 
+				FlxRandom.float(0, FlxG.height), 
+				_array[i].destinationPoint.x, 
+				_array[i].destinationPoint.y, 
+				.5, { onComplete: onComplete }
+			);
 		}
 	}
 	
@@ -361,32 +372,25 @@ class PuzzleRow extends FlxGroup
 			return;
 		}
 		
-		//Userdata is no longer used in the latest versions of HaxeFlixel, but that doesn't mean I can't go in there and modify the class myself! This worked too well.
-		var tween:FlxTween = FlxTween.tween(t.scale, { x: .1, y: .1 }, .25, { complete: removePieceTween } );		
-		tween.userData = t;		
+		var tween:FlxTween = FlxTween.tween(t.scale, { x: .1, y: .1 }, .25, { onComplete: function(tween) {
+			t.x = 0;
+			t.exists = false;
+			for (i in 0...mainArray.length)
+			{
+				if (mainArray[i] == t)
+				{
+					mainArray[i] = null;
+					break;
+				}
+			}
+		} } );		
 		
 		mainClass.checkRowTween(.3);
 	}
 	
-	private function removePieceTween(t:FlxTween):Void
+	override public function update(elapsed: Float):Void
 	{
-		t.userData.x = -100;
-		t.userData.x = 0;
-		t.userData.exists = false;		
-		
-		for (i in 0...mainArray.length)
-		{
-			if (mainArray[i] == t.userData)
-			{
-				mainArray[i] = null;				
-				break;
-			}
-		}		
-	}		
-	
-	override public function update():Void
-	{
-		super.update();								
+		super.update(elapsed);
 	}
 	
 }

@@ -436,7 +436,7 @@ class PuzzMain extends FlxGroup
 		columnArray[column2].mainArray[row2] = _piece1;	
 		
 		
-		var endTween:FlxTween = FlxTween.num(1, 10, movespeed + .01, { complete: tradePlacesTween } );				
+		var endTween:FlxTween = FlxTween.num(1, 10, movespeed + .01, { onComplete: tradePlacesTween } );				
 	}
 	
 	
@@ -471,7 +471,7 @@ class PuzzMain extends FlxGroup
 	
 	public function checkRowTween(_time:Float):Void
 	{		
-		rowCheckTween = FlxTween.num(0, 10, _time, { complete: onCheckRowsComplete } );
+		rowCheckTween = FlxTween.num(0, 10, _time, { onComplete: onCheckRowsComplete } );
 	}
 	
 	private function onCheckRowsComplete(t:FlxTween):Void
@@ -766,9 +766,9 @@ class PuzzMain extends FlxGroup
 		return false;
 	}
 	
-	override public function update():Void
+	override public function update(elapsed: Float):Void
 	{
-		super.update();
+		super.update(elapsed);
 		
 		movePiece();		
 		
