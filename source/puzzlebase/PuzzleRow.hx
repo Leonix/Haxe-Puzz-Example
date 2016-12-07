@@ -18,11 +18,9 @@ class PuzzleRow extends FlxGroup
 	public var location:FlxPoint;
 	private var refillSpeed:Int = 400;
 	
-	public var puzzleGroup:FlxTypedGroup<PuzzlePiece>;
-	
 	private var spaceBuffer:Int;
 	
-	private var mainClass:PuzzMain;	
+	public var mainClass:PuzzMain;	
 
 	//Sets everything up for row generation. Actual row generation is called from the PuzzMain class.
 	public function new(_location:FlxPoint, _rowSize:Int, _spaceBuffer:Int, _mainClass:PuzzMain) 
@@ -30,9 +28,6 @@ class PuzzleRow extends FlxGroup
 		super();			
 		
 		spaceBuffer = _spaceBuffer;
-		
-		puzzleGroup = new FlxTypedGroup<PuzzlePiece>();
-		add(puzzleGroup);
 		
 		rowSize = _rowSize;
 		
@@ -157,7 +152,7 @@ class PuzzleRow extends FlxGroup
 		 */
 		while (rowFillStart >= 0)
 		{
-			var puzzlePiece:PuzzlePiece = puzzleGroup.recycle(PuzzlePiece);
+			var puzzlePiece:PuzzlePiece = mainClass.puzzleGroup.recycle(PuzzlePiece, true);
 			chooseColor(puzzlePiece);			
 			mainArray[rowFillStart] = puzzlePiece;
 			mainClass.changeQueue(1);
@@ -191,16 +186,15 @@ class PuzzleRow extends FlxGroup
 				FlxRandom.float(0, FlxG.height), 
 				_array[i].destinationPoint.x, 
 				_array[i].destinationPoint.y, 
-				.5, { onComplete: onComplete }
+				.5, {
+					onComplete: function(t) {
+						mainClass.changeQueue(-1);
+					}
+				}
 			);
 		}
 	}
 	
-	private function onComplete(t:FlxTween):Void
-	{
-		mainClass.changeQueue( -1);
-	}	
-		
 	public function initializeFirstRow(_animate:Bool = false):Void
 	{
 		var rowMembers:Array<PuzzlePiece> = new Array();
@@ -297,7 +291,7 @@ class PuzzleRow extends FlxGroup
 				mainClass.changeQueue(1);
 			}*/
 			
-			var puzzlePiece:PuzzlePiece = puzzleGroup.recycle(PuzzlePiece);
+			var puzzlePiece:PuzzlePiece = mainClass.puzzleGroup.recycle(PuzzlePiece, true);
 			chooseColor(puzzlePiece);			
 			mainArray[rowFillStart] = puzzlePiece;			
 			newPieceCount += 1;
@@ -355,6 +349,9 @@ class PuzzleRow extends FlxGroup
 	//Remove a piece from the row. Keeps the slot in the array as 'null' so the class knows where to move pieces to.
 	public function removePiece(t:PuzzlePiece, _fast:Bool = false):Void
 	{
+		// Track scores
+		cast(FlxG.state, PlayState).scoreboard.addToScore(1);
+		
 		if (_fast)
 		{
 			t.x = -100;

@@ -23,11 +23,13 @@ class PuzzMain extends FlxGroup
 	
 	private var spaceBuffer:Int;
 	private var startpoint:FlxPoint;
-	
+
+	// orderQueue is the number of PuzzlePieces with ongoing animation
 	private var orderQueue:Int = 0;
 	
 	private var rowCheckTween:FlxTween;
 
+	public var puzzleGroup:FlxTypedGroup<PuzzlePiece>;
 	
 	// Generates the initial puzzle size, including space between each symbol, where the puzzle starts at, and so on.
 	public function new() 
@@ -35,21 +37,21 @@ class PuzzMain extends FlxGroup
 		super();
 		
 		columnArray = new Array();
-		
 		startpoint = new FlxPoint(100, 100);
-		
 		spaceBuffer = 2;
 		
+		puzzleGroup = new FlxTypedGroup<PuzzlePiece>();
+		add(puzzleGroup);
+		
+		// Create empty columns (no pieces yet
 		for (i in 0...columnAmount)
 		{
 			var puzzlrow:PuzzleRow = new PuzzleRow(new FlxPoint(startpoint.x + (i * PuzzlePiece.pieceSize) + (i * spaceBuffer), startpoint.y), rowAmount, spaceBuffer, this);
 			columnArray.push(puzzlrow);
 			add(puzzlrow);
 		}
-		
-		//checkRows();
-		//initializeFirstPuzzle();
-		//initializeRows();
+
+		// Populate columns with pieces
 		initialPuzzle();
 		
 		FlxG.watch.add(this, "orderQueue", "OQ: ");
@@ -63,28 +65,32 @@ class PuzzMain extends FlxGroup
 		for (i in 0...columnArray.length)
 		{
 			for (o in 0...rowAmount)
-			{				
-				var piece:PuzzlePiece = columnArray[i].puzzleGroup.recycle(PuzzlePiece);
+			{
+				// Add a piece to current column and initialize it with a random color
+				var piece:PuzzlePiece = puzzleGroup.recycle(PuzzlePiece);
 				piece.launch(null, columnArray[i]);
 				
+				
+				// Make sure there's no column match
+				vName = hName = "";
 				if (columnArray[i].mainArray[o - 1] != null && columnArray[i].mainArray[o - 2] != null)
 				{
-					//if (columnArray[i].mainArray[o].name == columnArray[i].mainArray[o - 1].name && columnArray[i].mainArray[o - 1].name == columnArray[i].mainArray[o - 2].name)
 					if (columnArray[i].mainArray[o - 1].name == columnArray[i].mainArray[o - 2].name)
 					{
 						vName = columnArray[i].mainArray[o - 1].name;
 					}
 				}
 				
+				// Make sure there's no row match
 				if (columnArray[i - 1] != null && columnArray[i - 2] != null)
 				{
-					//if (columnArray[i].mainArray[o] == columnArray[i - 1].mainArray[o] && columnArray[i - 1].mainArray[o] == columnArray[i - 2].mainArray[o])
 					if (columnArray[i - 1].mainArray[o].name == columnArray[i - 1].mainArray[o].name)
 					{
 						hName = columnArray[i - 1].mainArray[o].name;
 					}
 				}
 				
+				// Try random colors until there's no vertical and no horizontal match
 				while (piece.name == vName || piece.name == hName)
 				{
 					piece.launch(null, columnArray[i]);

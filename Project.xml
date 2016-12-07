@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<app title="PuzzleMatch" file="PuzzleMatch" main="Main" version="0.0.1" company="HaxeFlixel" />
+	<app title="PuzzleMatch" file="PuzzleMatch" main="Main" version="0.0.1" company="" />
 	
+	<!-- Docs: https://gist.github.com/jgranick/1763850#file-gistfile1-xml -->
+
+	<!-- Note that width and height are basically ignored here and specified in code. GameClass.hx  -->
 	<window width="640" height="480" fps="60" orientation="portrait" resizable="true" if="web" />
 	<window width="640" height="480" fps="60" orientation="landscape" fullscreen="false" hardware="true" vsync="true" unless="web" />
 	
-	<!--The flixel preloader gets stuck in Chrome, so it's disabled by default for now. 
-	Safe to use if you embed the swf into a html file!-->
-	<!--<app preloader="flixel.system.FlxPreloader" />-->
+	<!--	The flixel preloader gets stuck in Chrome,
+		UNLESS you remove fonts in include.xml in flixel sources
+		e.g. by adding unless="html5" in their element	-->
+	<app preloader="flixel.system.FlxPreloader" />
 	
 	<!--The swf version should be at least 11.2 if you want to use the FLX_MOUSE_ADVANCED option-->
 	<set name="SWF_VERSION" value="11.2" />
@@ -21,6 +25,9 @@
 	<haxelib name="openfl" />
 	<haxelib name="flixel"/>
 	
+	<!-- haxelib git continuation https://github.com/proletariatgames/haxe-continuation.git -->
+	<haxelib name="continuation" version="git" /> 
+
 	<!--In case you want to use the addons package-->
 	<!--<haxelib name="flixel-addons" />-->
 	

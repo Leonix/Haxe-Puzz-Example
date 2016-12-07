@@ -17,7 +17,7 @@ class PuzzlePiece extends FlxSprite
 	
 	public var statusLog:String = "";
 	
-	public static var pieceSize:Int = 30;	
+	public static var pieceSize:Int = 30;
 
 	public function new() 
 	{		
@@ -88,10 +88,9 @@ class PuzzlePiece extends FlxSprite
 	{
 		super.update(elapsed);
 		
-		if (FlxG.mouse.justPressed && GrunnUtil.overlapCheck(this))
+		if (FlxG.mouse.justPressed && mouseOverlapCheck())
 		{
-			//trace("You clicked a " +  name);
-			Reg.puzzleMain.setPieceTarget(this, rowAssignment);		
+			rowAssignment.mainClass.setPieceTarget(this, rowAssignment);
 			alpha = .5;
 		}
 		
@@ -100,7 +99,13 @@ class PuzzlePiece extends FlxSprite
 			alpha = 1;
 		}
 	}
-	
+
+	private function mouseOverlapCheck():Bool
+	{
+		var point:FlxPoint = FlxG.mouse.getScreenPosition();
+		return point.x >= x && point.x <= x + width && point.y >= y && point.y <= y + height;
+	}
+
 }
 
 enum Color
